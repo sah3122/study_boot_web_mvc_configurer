@@ -26,10 +26,17 @@ public class SampleControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    PersonRepository personRepository;
     @Test
     public void hello() throws Exception {
         //given
-        this.mockMvc.perform(get("/hello"))
+        Person person = new Person();
+        person.setName("dong");
+
+        Person save = personRepository.save(person);
+        //JPA 사용시 SpringBoot 에서 ID 관련된 Converter를 자동으로 등록해주어서 사용 가능.
+        this.mockMvc.perform(get("/hello").param("id", save.getId().toString()))
                 .andDo(print())
                 .andExpect(content().string("hello"));
 
