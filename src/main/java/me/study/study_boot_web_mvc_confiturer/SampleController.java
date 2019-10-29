@@ -42,4 +42,10 @@ public class SampleController {
     public String message(@RequestBody String body) {
         return body;
     }
+
+    @GetMapping("/jsonMessage")
+    // Jsonconverter 가 스프링 부트에서 등록되어 있기때문에 Object형식으로 변환하여 사용 할 수 있다.
+    public Person jsonMessage(@RequestBody Person person) {
+        return person;
+    }
 }
