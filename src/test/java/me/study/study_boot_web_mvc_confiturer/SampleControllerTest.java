@@ -11,9 +11,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.oxm.Marshaller;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,6 +40,9 @@ public class SampleControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    Marshaller marshaller;
 
     @Test
     public void hello() throws Exception {
@@ -101,7 +109,30 @@ public class SampleControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8)
                 .content(jsonString))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(0))
+                .andExpect(jsonPath("$.name").value("dong"));
+    }
 
+    @Test
+    public void xmlMessage() throws Exception {
+        Person person = new Person();
+        person.setId(0L);
+        person.setName("dong");
+
+        StringWriter stringWriter = new StringWriter();
+        Result result = new StreamResult(stringWriter);
+        marshaller.marshal(person, result);
+        String xmlString = stringWriter.toString();
+
+
+        this.mockMvc.perform(get("/jsonMessage")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .content(xmlString))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(xpath("person/name").string("dong"))
+                .andExpect(xpath("person/id").string("0"));
     }
 }

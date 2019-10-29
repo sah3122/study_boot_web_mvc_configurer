@@ -1,9 +1,11 @@
 package me.study.study_boot_web_mvc_confiturer;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.CacheControl;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -44,6 +46,15 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     // 해당 메소드를 이용해서 컨버터를 추가하면 기본 컨버터를 사용 할 수 없다. extends를 사용할것.
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+    }
+
+    @Bean
+    // Spring boot 에서 Xml converter를 제공해 주지 않기 때문에 주입 해줘야 한다.
+    public Jaxb2Marshaller marshaller(){
+        Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+        jaxb2Marshaller.setPackagesToScan(Person.class.getPackageName());
+        return jaxb2Marshaller;
 
     }
 }

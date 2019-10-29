@@ -3,7 +3,9 @@ package me.study.study_boot_web_mvc_confiturer;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 @Entity
 public class Person {
     @Id
