@@ -8,12 +8,19 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+/**
+ * Spring boot 에서 mvc 설정을 커스터마이징하려면 @Configuration + implements WebMvcConfigurer 조합을 사용해야한다.
+ * 해당 조합은 스프링 부트의 스프링 MVC 자동설정 + 추가설정
+ * @Configuration + @EnableWebMvc + implements WebMvcConfigurer 은 스프링 부트의 스프링 mvc 설정을 무시한다.
+ * properties 에서 설정 할 수 있는 것들이 많기 때문에 코드를 추가 하기 전 확인 해볼것.
+ */
 public class WebConfig implements WebMvcConfigurer {
 //    Spring Boot 에서는 Formatter를 따로 등록하지 않고 Bean만 등록되어 있어도 된다.
 //    @Override
@@ -56,5 +63,11 @@ public class WebConfig implements WebMvcConfigurer {
         jaxb2Marshaller.setPackagesToScan(Person.class.getPackageName());
         return jaxb2Marshaller;
 
+    }
+
+    @Override
+    // 간단한 뷰 요청을 매핑한다.
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/hi").setViewName("hi");;
     }
 }
